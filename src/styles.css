@@ -1,4 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono&family=VT323&display=swap');
+
 .App {
-  font-family: sans-serif;
+  font-family: 'VT323', monospace;
   text-align: center;
+  background-color: blueviolet;
+}
+
+.ol .ul .li {
+  list-style: none;
+  list-style-type: none;
+  color: aqua;
+}
+
+.button {
+  
 }
