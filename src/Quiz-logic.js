@@ -4,6 +4,7 @@ import { quiz } from './Quiz'
 const Quiz = () => {
   const [activeQuestion, setActiveQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState('')
+  const [showResult, setShowResult] = useState(false)
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null)
   const [result, setResult] = useState({
     score: 0,
@@ -15,9 +16,7 @@ const Quiz = () => {
   const { question, choices, correctAnswer } = questions[activeQuestion]
 
   const onClickNext = () => {
-    // again reset the selectedAnwerIndex, so it won't effect next question
     setSelectedAnswerIndex(null)
-    setActiveQuestion((prev) => prev + 1)
     setResult((prev) =>
       selectedAnswer
         ? {
@@ -27,6 +26,12 @@ const Quiz = () => {
           }
         : { ...prev, wrongAnswers: prev.wrongAnswers + 1 }
     )
+    if (activeQuestion !== questions.length - 1) {
+      setActiveQuestion((prev) => prev + 1)
+    } else {
+      setActiveQuestion(0)
+      setShowResult(true)
+    }
   }
 
   const onAnswerSelected = (answer, index) => {
@@ -42,32 +47,54 @@ const Quiz = () => {
 
   return (
     <div className="quiz-container">
-      <div>
-        <span className="active-question-no">
-          {addLeadingZero(activeQuestion + 1)}
-        </span>
-        <span className="total-question">
-          /{addLeadingZero(questions.length)}
-        </span>
-      </div>
-      <h2>{question}</h2>
-      <ul>
-        {choices.map((answer, index) => (
-          <li
-            onClick={() => onAnswerSelected(answer, index)}
-            key={answer}
-            className={
-              selectedAnswerIndex === index ? 'selected-answer' : null
-            }>
-            {answer}
-          </li>
-        ))}
-      </ul>
-      <div className="flex-right">
-        <button onClick={onClickNext} disabled={selectedAnswerIndex === null}>
-          {activeQuestion === questions.length - 1 ? 'Finish' : 'Next'}
-        </button>
-      </div>
+      {!showResult ? (
+        <div>
+          <div>
+            <span className="active-question-no">
+              {addLeadingZero(activeQuestion + 1)}
+            </span>
+            <span className="total-question">
+              /{addLeadingZero(questions.length)}
+            </span>
+          </div>
+          <h2>{question}</h2>
+          <ul>
+            {choices.map((answer, index) => (
+              <li
+                onClick={() => onAnswerSelected(answer, index)}
+                key={answer}
+                className={
+                  selectedAnswerIndex === index ? 'selected-answer' : null
+                }>
+                {answer}
+              </li>
+            ))}
+          </ul>
+          <div className="move-button">
+            <button
+              onClick={onClickNext}
+              disabled={selectedAnswerIndex === null}>
+              {activeQuestion === questions.length - 1 ? 'Finish' : 'Next'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="result">
+          <h3>Result</h3>
+          <p>
+            Total Question: <span>{questions.length}</span>
+          </p>
+          <p>
+            Total Score:<span> {result.score}</span>
+          </p>
+          <p>
+            Correct Answers:<span> {result.correctAnswers}</span>
+          </p>
+          <p>
+            Wrong Answers:<span> {result.wrongAnswers}</span>
+          </p>
+        </div>
+      )}
     </div>
   )
 }
